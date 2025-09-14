@@ -51,21 +51,38 @@
         font-size: 0.9rem;
         margin-top: 16px;
         color: #555; }
+
+    #inputValue2{
+      display: none;
+    }
+
+
+   
   </style>
 </head>
-<body>
+<body onload="convert()">
   <div class="converter">
     <h2>Unity Converter</h2>
     <label for="conversionType">Select a conversion type</label>
-    <select id="conversionType">
+    <select id="conversionType" onchange="unitChanged()">
       <option value="milesToKm">Miles → Kilometers</option>
       <option value="kmToMiles">Kilometers → Miles</option>
       <option value="fToC">Fahrenheit → Celsius</option>
       <option value="cToF">Celsius → Fahrenheit</option>
+      <option value="feetToinches">Feet → Inches</option>
+      <option value="CircleArea">CircleArea</option>
+      <!--Need two inputs-->
+      <option value="TriangleArea">TriangleArea</option>
+      <option value="SquareArea">SquareArea</option>
+
     </select>
 
     <label for="inputValue">Input</label>
-    <input type="number" id="inputValue" placeholder="Enter a value">
+    <input type="number" id="inputValue" placeholder="Enter a value" oninput="convert()">
+
+    <!--Second Input box for triangle and square area-->
+    <input type="number" id="inputValue2" placeholder="Enter a value" oninput="convert()">
+
     <div class="output" id="outputBox">Result will appear here</div>
     <div class="formula" id="formulaBox"></div>
   </div>
@@ -73,16 +90,45 @@
   <script>
     const conversionType = document.getElementById('conversionType');
     const inputValue = document.getElementById('inputValue');
+    const inputValue2 = document.getElementById('inputValue2');
     const outputBox = document.getElementById('outputBox');
     const formulaBox = document.getElementById('formulaBox');
 
+    function unitChanged() {
+           inputValue.value = "";
+           inputValue2.value = "";
+           outputBox.value = "";
+           convert();
+       }
+   
+      
     function convert() {
+        
       let convert = parseFloat(inputValue.value);
-      if (isNaN(convert)) {
-        outputBox.innerText = "Result will appear here";
-        formulaBox.innerText = "";
-        return;
-      }
+      const val2 = parseFloat(inputValue2.value);
+      const type = conversionType.value;
+
+        if (type === "TriangleArea" || type === "SquareArea") {
+           inputValue2.style.display = "block";
+        
+        } else {
+          inputValue2.style.display = "none";
+          inputValue2.value = "";
+        }
+         
+
+    
+        if (isNaN(convert) || ((type === "TriangleArea" || type === "SquareArea") && isNaN(val2))) {
+          outputBox.innerText = "Result will appear here";
+          formulaBox.innerText = "";
+          return;
+        }
+
+         if (isNaN(convert)) {
+            outputBox.innerText = "Result will appear here";
+            formulaBox.innerText = "";
+            return;
+          }
 
       let result = "", formula = "";
       switch (conversionType.value) {
@@ -102,12 +148,36 @@
           result = ((convert * 9/5) + 32).toFixed(2) + " °F";
           formula = "°F = (°C × 9/5) + 32";
           break;
+
+        //For feet to inches
+        case "feetToinches":
+          result = (convert * 12).toFixed(2) + " inches";
+          formula = "1feet = 12inches";
+          break;
+        //For CircleArea
+        case "CircleArea":
+          result = (Math.PI * convert * convert).toFixed(2) + "units²";
+          formula = "Circle Area = π × radius²";
+          break;
+        //For Triangle , we need two inputs box 
+        case "TriangleArea":
+          result =( 0.5 * convert * val2).toFixed(2) + "units²";
+          formula = "Triangle Area = 1/2 * base * height";
+          break;
+
+        case "SquareArea":
+          result = (  convert * val2).toFixed(2) + "units²";
+          formula = "Square area = width * length";
+          break;
+
+        
+
+
       }
       outputBox.innerText = result;
       formulaBox.innerText = formula;
     }
-    conversionType.addEventListener('change', convert);
-    inputValue.addEventListener('input', convert);
+   
   </script>
 </body>
 </html>
