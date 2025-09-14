@@ -52,21 +52,52 @@
         margin-top: 16px;
         color: #555; }
 
-    #inputValue2{
-      display: none;
-    }
+        #inputValue2 {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, opacity 0.4s ease;
+        pointer-events: none;
+        
+      }
+
+      #inputValue2.show {
+        max-height: 100px; 
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+    .ar_reverse{
+        font-size: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        margin: 20px 0;
+        color:black;
+        transition: transform 0.4s ease;
+        
+            }
+
+          .ar_reverse:hover{
+            transform: rotate(180deg);
+          }
+
+          .hiddens{
+            display: none;
+          }
 
 
    
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body onload="convert()">
+<body onload="unitChanged()">
   <div class="converter">
     <h2>Unity Converter</h2>
     <label for="conversionType">Select a conversion type</label>
     <select id="conversionType" onchange="unitChanged()">
       <option value="milesToKm">Miles → Kilometers</option>
-      <option value="kmToMiles">Kilometers → Miles</option>
       <option value="fToC">Fahrenheit → Celsius</option>
       <option value="cToF">Celsius → Fahrenheit</option>
       <option value="feetToinches">Feet → Inches</option>
@@ -79,6 +110,10 @@
 
     <label for="inputValue">Input</label>
     <input type="number" id="inputValue" placeholder="Enter a value" oninput="convert()">
+
+      <div class="ar_reverse hiddens" id="arrow" onclick="ar_toggle()">
+          <i class="fas fa-arrows-rotate"></i>
+      </div>
 
     <!--Second Input box for triangle and square area-->
     <input type="number" id="inputValue2" placeholder="Enter a value" oninput="convert()">
@@ -93,13 +128,39 @@
     const inputValue2 = document.getElementById('inputValue2');
     const outputBox = document.getElementById('outputBox');
     const formulaBox = document.getElementById('formulaBox');
+    const  arrow = document.getElementById('arrow');
+
+
+     let FtoC = true;
+
+    function ar_toggle() {
+  if (conversionType.value === "fToC") {
+    conversionType.value = "cToF";
+  } else if (conversionType.value === "cToF") {
+    conversionType.value = "fToC";
+  }
+
+  unitChanged();
+}
 
     function unitChanged() {
            inputValue.value = "";
            inputValue2.value = "";
-           outputBox.value = "";
-           convert();
-       }
+           outputBox.innerText = "";
+
+          const type = conversionType.value;
+           
+
+          if (type === "fToC" || type === "cToF") {
+            arrow.classList.remove('hiddens');
+          } else {
+            arrow.classList.add('hiddens');
+            FtoC = true; 
+          }
+
+          convert();
+        }
+       
    
       
     function convert() {
@@ -109,12 +170,14 @@
       const type = conversionType.value;
 
         if (type === "TriangleArea" || type === "SquareArea") {
-           inputValue2.style.display = "block";
+           inputValue2.classList.add('show');
         
         } else {
-          inputValue2.style.display = "none";
+          inputValue2.classList.remove('show');
           inputValue2.value = "";
         }
+
+      
          
 
     
@@ -136,19 +199,22 @@
           result = (convert * 1.60934).toFixed(2) + " km";
           formula = "km = miles × 1.60934";
           break;
-        case "kmToMiles":
-          result = (convert / 1.60934).toFixed(2) + " miles";
-          formula = "miles = km ÷ 1.60934";
-          break;
-        case "fToC":
-          result = ((convert - 32) * 5/9).toFixed(2) + " °C";
+        
+         case "fToC":
+         case "cToF":
+        if (FtoC) {
+          
+          result = ((convert - 32) * 5 / 9).toFixed(2) + " °C";
           formula = "°C = (°F - 32) × 5/9";
-          break;
-        case "cToF":
-          result = ((convert * 9/5) + 32).toFixed(2) + " °F";
+        } else {
+          
+          result = ((convert * 9 / 5) + 32).toFixed(2) + " °F";
           formula = "°F = (°C × 9/5) + 32";
-          break;
+        }
+        break;
 
+              break;
+        
         //For feet to inches
         case "feetToinches":
           result = (convert * 12).toFixed(2) + " inches";
