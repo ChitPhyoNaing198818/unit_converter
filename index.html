@@ -18,17 +18,23 @@
     .converter {
       background: #fff;
       width: 360px;
-      padding: 2rem;
+      padding: 2.5rem 2rem 3rem;
       border-radius: 16px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
     }
     h2 {
         text-align: center;
-        margin-bottom: 1rem; }
+        margin-bottom: 0.3rem; }
     label {
         display: block;
         margin-top: 1rem;
-        font-weight: 500; }
+        font-weight: 500;
+        
+       }
     input, select {
         width: 100%;
         padding: 0.6rem;
@@ -38,19 +44,26 @@
         border-radius: 8px;
         font-size: 1rem; }
     .output {
-        margin-top: 1.2rem;
+        margin-top: 8px;
         padding: 1rem;
         border: 2px dashed #ffbf47;
         border-radius: 8px;
         background: #fff8e7;
         text-align: center;
         font-weight: bold;
-        min-height: 40px; }
+        min-height: 40px;
+        display: flex;
+        text-align: center;
+        justify-content: center; 
+        align-items: center;
+       }
     .formula {
         font-family: 'Source Code Pro', monospace;
-        font-size: 0.9rem;
-        margin-top: 16px;
-        color: #555; }
+        font-size: 1rem;
+        color: #555;
+        margin-top: 0.75rem;
+        text-align: center;
+        min-height: 24px; }
 
         #inputValue2 {
         max-height: 0;
@@ -67,25 +80,44 @@
         pointer-events: auto;
       }
 
-    .ar_reverse{
-        font-size: 25px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        margin: 20px 0;
-        color:black;
-        transition: transform 0.4s ease;
-        
-            }
+  .ar_reverse {
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 0.6rem auto 0;
+  color: #0BD1F4;
+  background-color: #e7fafe;
+  border: 2px solid #0BD1F4;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  transition: transform 0.4s ease;
+ 
+ }
 
-          .ar_reverse:hover{
-            transform: rotate(180deg);
-          }
+.ar_reverse:hover {
+  transform: rotate(180deg);
+  background-color: #0BD1F4;
+  color: white;
+ }
 
-          .hiddens{
-            display: none;
-          }
+.ar_reverse:active {
+  transform: scale(0.95);
+ }
+
+
+.hiddens{
+      display: none;
+    }
+
+h2{
+  font-size: 2rem;
+  
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
 
 
    
@@ -94,9 +126,12 @@
 </head>
 <body onload="unitChanged()">
   <div class="converter">
-    <h2>Unity Converter</h2>
+    <h2>Unity Converter</h2> <!--Want to add 'select a conversion type' inside select' without using label -->
     <label for="conversionType">Select a conversion type</label>
     <select id="conversionType" onchange="unitChanged()">
+
+
+      <option disabled selected>Select a conversion type</option> 
       <option value="milesToKm">Miles → Kilometers</option>
       <option value="fToC">Fahrenheit → Celsius</option>
       <option value="cToF">Celsius → Fahrenheit</option>
@@ -107,9 +142,13 @@
       <option value="SquareArea">SquareArea</option>
 
     </select>
+     <div>
+      <label for="inputValue">Enter No.of Units</label>
+      <input type="number" id="inputValue" placeholder="Enter a value" oninput="convert()">
 
-    <label for="inputValue">Input</label>
-    <input type="number" id="inputValue" placeholder="Enter a value" oninput="convert()">
+    
+     </div>
+    
 
       <div class="ar_reverse hiddens" id="arrow" onclick="ar_toggle()">
           <i class="fas fa-arrows-rotate"></i>
@@ -131,7 +170,7 @@
     const  arrow = document.getElementById('arrow');
 
 
-     let FtoC = true;
+     
 
     function ar_toggle() {
   if (conversionType.value === "fToC") {
@@ -144,9 +183,10 @@
 }
 
     function unitChanged() {
-           inputValue.value = "";
-           inputValue2.value = "";
-           outputBox.innerText = "";
+          
+          outputBox.innerText = "";
+          inputValue.value = "";
+          inputValue2.value = "";
 
           const type = conversionType.value;
            
@@ -155,7 +195,7 @@
             arrow.classList.remove('hiddens');
           } else {
             arrow.classList.add('hiddens');
-            FtoC = true; 
+            
           }
 
           convert();
@@ -197,23 +237,23 @@
       switch (conversionType.value) {
         case "milesToKm":
           result = (convert * 1.60934).toFixed(2) + " km";
-          formula = "km = miles × 1.60934";
+          formula = "1km = miles × 1.60934";
           break;
         
          case "fToC":
-         case "cToF":
-        if (FtoC) {
-          
-          result = ((convert - 32) * 5 / 9).toFixed(2) + " °C";
-          formula = "°C = (°F - 32) × 5/9";
-        } else {
-          
-          result = ((convert * 9 / 5) + 32).toFixed(2) + " °F";
-          formula = "°F = (°C × 9/5) + 32";
-        }
-        break;
+             result = ((convert - 32) * 5 / 9).toFixed(2) + " °C";
+             formula = "°C = (°F - 32) × 5/9";
+             break;
 
-              break;
+         case "cToF":
+           result = ((convert * 9 / 5) + 32).toFixed(2) + " °F";
+           formula = "°F = (°C × 9/5) + 32";
+           break;
+
+         
+       
+
+            
         
         //For feet to inches
         case "feetToinches":
