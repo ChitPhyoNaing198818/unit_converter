@@ -172,7 +172,8 @@ h2{
 
      
 
-    function ar_toggle() {
+function ar_toggle() {
+
   if (conversionType.value === "fToC") {
     conversionType.value = "cToF";
   } else if (conversionType.value === "cToF") {
@@ -180,7 +181,7 @@ h2{
   }
 
   unitChanged();
-}
+  }
 
     function unitChanged() {
           
@@ -197,6 +198,21 @@ h2{
             arrow.classList.add('hiddens');
             
           }
+
+
+          if (type === 'TriangleArea') {
+            inputValue.placeholder = 'Enter base';
+            inputValue2.placeholder = 'Enter height';
+            inputValue2.classList.add('show');
+          } else if (type === 'SquareArea') {
+           inputValue.placeholder = 'Enter width';
+           inputValue2.placeholder = 'Enter length';
+           inputValue2.classList.add('show');
+          } else {
+           inputValue.placeholder = 'Enter a value';
+           inputValue2.classList.remove('show');
+          }
+      
 
           convert();
         }
@@ -249,12 +265,7 @@ h2{
            result = ((convert * 9 / 5) + 32).toFixed(2) + " °F";
            formula = "°F = (°C × 9/5) + 32";
            break;
-
-         
-       
-
-            
-        
+  
         //For feet to inches
         case "feetToinches":
           result = (convert * 12).toFixed(2) + " inches";
@@ -267,6 +278,7 @@ h2{
           break;
         //For Triangle , we need two inputs box 
         case "TriangleArea":
+          
           result =( 0.5 * convert * val2).toFixed(2) + "units²";
           formula = "Triangle Area = 1/2 * base * height";
           break;
