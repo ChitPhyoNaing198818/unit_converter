@@ -63,7 +63,9 @@
         color: #555;
         margin-top: 0.75rem;
         text-align: center;
-        min-height: 24px; }
+        min-height: 24px;
+        
+         }
 
         #inputValue2 {
         max-height: 0;
@@ -122,6 +124,8 @@ h2{
 
    
   </style>
+  
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body onload="unitChanged()">
@@ -167,12 +171,10 @@ h2{
     const inputValue2 = document.getElementById('inputValue2');
     const outputBox = document.getElementById('outputBox');
     const formulaBox = document.getElementById('formulaBox');
-    const  arrow = document.getElementById('arrow');
-
-
-     
+    const  arrow = document.getElementById('arrow'); 
 
 function ar_toggle() {
+  const temp = inputValue.value; // ✅ Save current input before switching
 
   if (conversionType.value === "fToC") {
     conversionType.value = "cToF";
@@ -180,16 +182,23 @@ function ar_toggle() {
     conversionType.value = "fToC";
   }
 
-  unitChanged();
-  }
+  unitChanged(false); // ✅ Prevent resetting input
+  inputValue.value = temp; // ✅ Restore previous input value
+  convert(); 
+}
 
-    function unitChanged() {
-          
-          outputBox.innerText = "";
-          inputValue.value = "";
-          inputValue2.value = "";
+    function unitChanged(reset = true) {
 
           const type = conversionType.value;
+
+          if(reset){
+              outputBox.innerText = "";
+              inputValue.value = "";
+              inputValue2.value = "";
+          }
+        
+
+          
            
 
           if (type === "fToC" || type === "cToF") {
@@ -253,7 +262,7 @@ function ar_toggle() {
       switch (conversionType.value) {
         case "milesToKm":
           result = (convert * 1.60934).toFixed(2) + " km";
-          formula = "1km = miles × 1.60934";
+          formula = "km = miles × 1.60934";
           break;
         
          case "fToC":
@@ -269,7 +278,7 @@ function ar_toggle() {
         //For feet to inches
         case "feetToinches":
           result = (convert * 12).toFixed(2) + " inches";
-          formula = "1feet = 12inches";
+          formula = "feet = 12  × inches";
           break;
         //For CircleArea
         case "CircleArea":
@@ -280,12 +289,12 @@ function ar_toggle() {
         case "TriangleArea":
           
           result =( 0.5 * convert * val2).toFixed(2) + "units²";
-          formula = "Triangle Area = 1/2 * base * height";
+          formula = "Triangle Area = 1/2  ×  base  ×  height";
           break;
 
         case "SquareArea":
           result = (  convert * val2).toFixed(2) + "units²";
-          formula = "Square area = width * length";
+          formula = "Square area = width  ×  length";
           break;
 
         
