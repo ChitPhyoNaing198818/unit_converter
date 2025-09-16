@@ -121,6 +121,42 @@ h2{
   text-align: center;
 }
 
+.input-with-unit {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.input-with-unit input,
+.input-with-unit select {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #0BD1F4;
+  background-color: #E7FAFE;
+}
+
+.input-with-unit input {
+  flex: 1;
+}
+
+.input-with-unit select {
+  max-width: 80px;
+  flex-shrink: 0;
+}
+
+#inputGroup2 {
+  display: none;
+}
+
+#inputValue2.show {
+  max-height: 100px; 
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
 
    
   </style>
@@ -131,7 +167,7 @@ h2{
 <body onload="unitChanged()">
   <div class="converter">
     <h2>Unity Converter</h2> <!--Want to add 'select a conversion type' inside select' without using label -->
-    <label for="conversionType">Select a conversion type</label>
+    
     <select id="conversionType" onchange="unitChanged()">
 
 
@@ -146,12 +182,18 @@ h2{
       <option value="SquareArea">SquareArea</option>
 
     </select>
-     <div>
-      <label for="inputValue">Enter No.of Units</label>
-      <input type="number" id="inputValue" placeholder="Enter a value" oninput="convert()">
 
-    
-     </div>
+   <div class="input-unit-group">
+  <label for="inputValue">Enter No.of Units</label>
+  <div class="input-with-unit">
+    <input type="number" id="inputValue" placeholder="Enter a value" oninput="convert()">
+    <select id="unitSelector" onchange="convert()">
+      <option value="mm" selected>mm</option>
+      <option value="cm">cm</option>
+      <option value="m">m</option>
+    </select>
+  </div>
+</div>
     
 
       <div class="ar_reverse hiddens" id="arrow" onclick="ar_toggle()">
@@ -159,7 +201,18 @@ h2{
       </div>
 
     <!--Second Input box for triangle and square area-->
+    <div class="input-unit-group" id="inputGroup2">
+  <label for="inputValue2"></label>
+  <div class="input-with-unit">
     <input type="number" id="inputValue2" placeholder="Enter a value" oninput="convert()">
+    <select id="unitSelector2" onchange="convert()">
+      <option value="mm" selected>mm</option>
+      <option value="cm">cm</option>
+      <option value="m">m</option>
+    </select>
+  </div>
+</div>
+    
 
     <div class="output" id="outputBox">Result will appear here</div>
     <div class="formula" id="formulaBox"></div>
@@ -172,6 +225,7 @@ h2{
     const outputBox = document.getElementById('outputBox');
     const formulaBox = document.getElementById('formulaBox');
     const  arrow = document.getElementById('arrow'); 
+    const unitSelector = document.getElementById('unitSelector');
 
 function ar_toggle() {
   const temp = inputValue.value; // ✅ Save current input before switching
@@ -190,6 +244,7 @@ function ar_toggle() {
     function unitChanged(reset = true) {
 
           const type = conversionType.value;
+          const unitGroup2 = document.getElementById('inputGroup2');
 
           if(reset){
               outputBox.innerText = "";
@@ -221,6 +276,20 @@ function ar_toggle() {
            inputValue.placeholder = 'Enter a value';
            inputValue2.classList.remove('show');
           }
+
+          if (type === "CircleArea" || type === "TriangleArea" || type === "SquareArea") {
+            unitSelector.style.display = 'inline-block';
+          } else {
+            unitSelector.style.display = 'none';
+            }
+
+            if (type === "TriangleArea" || type === "SquareArea") {
+              
+              unitGroup2.style.display = 'block';
+            } else {
+              unitGroup2.style.display = 'none';
+             
+            }
       
 
           convert();
@@ -233,6 +302,9 @@ function ar_toggle() {
       let convert = parseFloat(inputValue.value);
       const val2 = parseFloat(inputValue2.value);
       const type = conversionType.value;
+      const unit1 = unitSelector.value;
+      const unit2 = document.getElementById('unitSelector2').value;
+      const unit = unitSelector.value;
 
         if (type === "TriangleArea" || type === "SquareArea") {
            inputValue2.classList.add('show');
@@ -259,6 +331,22 @@ function ar_toggle() {
           }
 
       let result = "", formula = "";
+      let num3 = 1;
+      if(unit1 === "mm" && unit2 === "cm"){
+        num3 = 10;
+      } else if(unit1 === "mm" && unit2 === "m"){
+        num3 = 1000;
+      } else if(unit1 === "cm" && unit2 === "mm"){
+        num3 = 0.1;
+      } else if(unit1 === "cm" && unit2 === "m"){
+        num3 = 100;
+      } else if(unit1 === "m" && unit2 === "mm"){
+        num3 = 0.001;
+      } else if(unit1 === "m" && unit2 === "cm"){
+        num3 = 0.01;
+      }
+      const newval2 = val2 * num3;
+
       switch (conversionType.value) {
         case "milesToKm":
           result = (convert * 1.60934).toFixed(2) + " km";
@@ -278,22 +366,22 @@ function ar_toggle() {
         //For feet to inches
         case "feetToinches":
           result = (convert * 12).toFixed(2) + " inches";
-          formula = "feet = 12  × inches";
+          formula = "inches = 12  × feets";
           break;
         //For CircleArea
         case "CircleArea":
-          result = (Math.PI * convert * convert).toFixed(2) + "units²";
+          result = (Math.PI * convert * convert).toFixed(2) + `${unit}²`;
           formula = "Circle Area = π × radius²";
           break;
         //For Triangle , we need two inputs box 
         case "TriangleArea":
           
-          result =( 0.5 * convert * val2).toFixed(2) + "units²";
+          result =( 0.5 * convert * newval2).toFixed(2) + ` ${unit}²`;
           formula = "Triangle Area = 1/2  ×  base  ×  height";
           break;
 
         case "SquareArea":
-          result = (  convert * val2).toFixed(2) + "units²";
+          result = (  convert * newval2).toFixed(2) + ` ${unit}²`;
           formula = "Square area = width  ×  length";
           break;
 
